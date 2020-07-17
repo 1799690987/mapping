@@ -1,0 +1,164 @@
+curl -XPUT "http://127.0.0.1:9200/drugs_20200716?pretty" -H 'Content-Type: application/json' -d'
+{
+    "aliases":{
+        "drugs":{
+
+        }
+    },
+    "settings":{
+        "number_of_shards":3,
+        "number_of_replicas":1,
+        "analysis":{
+            "filter":{
+                "define_pinyin":{
+                  "lowercase": "true",
+                  "keep_original": "true",
+                  "remove_duplicated_term": "true",
+                  "keep_separate_first_letter": "false",
+                  "type": "pinyin",
+                  "limit_first_letter_length": "16",
+                  "keep_full_pinyin": "true",
+                  "keep_joined_full_pinyin": "true",
+                  "keep_none_chinese_together": "true",
+                  "keep_none_chinese_in_joined_full_pinyin": "true"
+                },
+                "local_synonym":{
+                    "type":"synonym",
+                    "synonyms_path":"analysis/synonym.txt"
+                }
+            },
+            "normalizer":{
+                "my_normalizer":{
+                    "filter":[
+                        "lowercase",
+                        "asciifolding"
+                    ],
+                    "type":"custom"
+                }
+            },
+            "analyzer":{
+                "my_hanlp_index":{
+                    "filter":[
+                        "local_synonym",
+                        "lowercase",
+                        "asciifolding"
+                    ],
+                    "type":"custom",
+                    "tokenizer":"hanlp_index",
+                    "char_filter": ["html_strip"]
+                },
+                "hanlp_synonym":{
+                    "filter":[
+                        "local_synonym",
+                        "lowercase",
+                        "asciifolding"
+                    ],
+                    "type":"custom",
+                    "tokenizer":"hanlp"
+                },
+                "default":{
+                    "type":"hanlp_index"
+                },
+                "pinyin":{
+                    "filter":[
+                        "define_pinyin",
+                        "lowercase"
+                    ],
+                    "type":"custom",
+                    "tokenizer":"hanlp_index"
+                },
+                "hanlp_del_html":{
+                    "filter":[
+                        "local_synonym"
+                    ],
+                    "char_filter":[
+                        "html_strip"
+                    ],
+                    "type":"custom",
+                    "tokenizer":"hanlp"
+                },
+                "hanlp_index_del_html":{
+                    "filter":[
+                        "local_synonym"
+                    ],
+                    "char_filter":[
+                        "html_strip"
+                    ],
+                    "type":"custom",
+                    "tokenizer":"hanlp_index"
+                }
+            }
+        }
+    },
+    "mappings":{
+        "dynamic":"false",
+        "properties":{
+            "create_time":{
+                "type":"date",
+                "format":"yyyy-MM-dd HH:mm:ss"
+            },
+            "disease_base_id":{
+                "type":"long"
+            },
+            "first_type":{
+                "type":"keyword"
+            },
+            "hits":{
+                "type":"long"
+            },
+            "index_create_time":{
+                "type":"date",
+                "format":"yyyy-MM-dd HH:mm:ss"
+            },
+            "index_type":{
+                "type":"keyword"
+            },
+            "index_update_time":{
+                "type":"date",
+                "format":"yyyy-MM-dd HH:mm:ss"
+            },
+            "key_id":{
+                "type":"keyword"
+            },
+            "pinyin":{
+                "type":"keyword",
+                "doc_values":false,
+                "normalizer":"my_normalizer"
+            },
+            "status":{
+                "type":"integer"
+            },
+            "suggest":{
+                "type":"completion",
+                "analyzer":"my_hanlp_index",
+                "search_analyzer":"hanlp_synonym",
+                "preserve_separators":false,
+                "preserve_position_increments":false,
+                "max_input_length":50
+            },
+            "tags":{
+                "type":"text",
+                "analyzer":"my_hanlp_index",
+                "search_analyzer":"hanlp_synonym"
+            },
+            "title":{
+                "type":"text",
+                "fields":{
+                    "py_title":{
+                        "type":"text",
+                        "analyzer":"pinyin"
+                    }
+                },
+                "analyzer":"my_hanlp_index",
+                "search_analyzer":"hanlp_synonym"
+            },
+            "title_term":{
+                "type":"keyword"
+            },
+            "update_time":{
+                "type":"date",
+                "format":"yyyy-MM-dd HH:mm:ss"
+            }
+        }
+    }
+}'

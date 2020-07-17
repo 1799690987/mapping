@@ -1,0 +1,35 @@
+备注：本次所有mapping使用的分词插件有:
+Ik:https://github.com/medcl/elasticsearch-analysis-ik
+Hanlp:https://github.com/KennFalcon/elasticsearch-analysis-hanlp
+Pinyin:https://github.com/medcl/elasticsearch-analysis-pinyin
+
+1,先在服务器在es服务器运行mappings.
+2,运行索引创建项目(baikemy-ms-index 分支bytedance)第一次需要调用以下接口全量创建所有索引，以后索引每天会增量创建所有索引。
+项目地址：https://code.baikemy.com/baikemy/baikemy-ms-index.git
+
+#创建索引请求地址
+curl http://localhost:8877/ms/index/disease
+curl http://localhost:8877/ms/index/article
+curl http://localhost:8877/ms/index/video
+curl http://localhost:8877/ms/index/hospital
+curl http://localhost:8877/ms/index/doctor
+curl http://localhost:8877/ms/index/inquiry
+curl http://localhost:8877/ms/index/questionAnswer
+curl http://localhost:8877/ms/index/drugs
+
+#如果嫌麻烦可以运行此链接一次创建索引索引(因为创建索引很消耗性能，此方法将长时间占用服务器大量性能)
+curl http://localhost:8877/ms/index/all
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
